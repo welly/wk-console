@@ -2,6 +2,8 @@
 
 A Mac app for the [K1EL WinKeyer](https://k1elsystems.com/WK3IC.html) Morse keyer. See your speed live, send messages and typed text, and edit the keyer's settings, messages and callsigns. It replaces most of what you'd otherwise do with paddle commands.
 
+![WK Console's Operate page sending a CQ message: the live speed, the Sent box with the rest of the message highlighted as it goes out, and the message list beside it](docs/screenshot.png)
+
 WK Console is an independent project. It isn't affiliated with or endorsed by K1EL Systems. "WinKeyer" is K1EL's name for its keyer and is used here only to say what the app works with.
 
 ## Features
