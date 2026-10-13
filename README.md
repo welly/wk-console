@@ -32,7 +32,22 @@ Descriptions are based on K1EL's [WinKeyer 3 datasheet](https://k1elsystems.com/
 | Minimum WPM | The lowest speed the speed control gives. |
 | WPM range | How far the speed control goes above the minimum. A minimum of 15 and a range of 15 gives 15–30 WPM. Up to 31. |
 | Command speed | The speed of the keyer's own Morse replies in command mode (the `R`, `E` and `?` you hear after pressing the command button). It doesn't affect sending speed. |
-| Farnsworth | For code practice. Letters are sent at this speed, with the gaps between them stretched to match your normal sending speed. 0 turns it off; it also has no effect when sending faster than the Farnsworth speed. |
+| Farnsworth | For code practice: the speed of each **letter**, not of the spacing. See [Farnsworth timing](#farnsworth-timing) below. 0 turns it off; otherwise 10–99 WPM. |
+
+#### Farnsworth timing
+
+Farnsworth timing sends each letter quickly but leaves longer gaps between letters, so you learn the sound of whole letters rather than counting dits and dahs. On the WinKeyer it works the opposite way round from what many people expect:
+
+- **Farnsworth** sets how fast each **letter** is sent.
+- **The speed control** sets the **overall** speed. The keyer stretches the gaps between letters to slow the overall pace down to it.
+
+It only has an effect when your sending speed is **lower** than the Farnsworth speed. When you send faster, the keyer ignores it.
+
+**Example.** To hear letters at 20 WPM with an overall pace of about 8 WPM:
+
+1. Set **Farnsworth** to 20.
+2. Make sure the speed control can go down to 8 WPM: set **Minimum WPM** to 8 or below, then **Write to Keyer**.
+3. Turn the speed control down to 8 WPM.
 
 #### Paddle
 
