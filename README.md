@@ -6,7 +6,7 @@ WK Console is an independent project. It isn't affiliated with or endorsed by K1
 
 ## Features
 
-- **Live speed.** Large WPM display that follows the speed knob, also shown in the menu bar.
+- **Live speed.** Large WPM display that follows the keyer's speed control, also shown in the menu bar.
 - **Send messages.** Your stored messages with short labels, sent with a click or F1–F12. Esc stops sending.
 - **Type to send.** Send a line at a time, or as you type.
 - **Sent-text transcript.** What the keyer actually sent, from its echo. Paddle sending is underlined.

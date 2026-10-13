@@ -43,7 +43,7 @@ struct OperateView: View {
             .accessibilityValue(speed.wpm.map { "\($0) words per minute" } ?? "Unknown")
             .accessibilityAddTraits(.updatesFrequently)
             .onChange(of: speed.wpm) { _, wpm in
-                // Announce the speed once the knob has settled, for VoiceOver users.
+                // Announce the speed once the speed control has settled, for VoiceOver users.
                 announcement?.cancel()
                 guard let wpm else { return }
                 announcement = Task {
@@ -54,7 +54,7 @@ struct OperateView: View {
             Spacer()
             VStack(alignment: .trailing, spacing: 6) {
                 if let s = model.activeSettings {
-                    Text("User \(s.user) · \(s.keyMode.name) · knob \(s.minWPM)–\(s.maxWPM) WPM")
+                    Text("User \(s.user) · \(s.keyMode.name)")
                         .foregroundStyle(Palette.secondaryText)
                 }
                 Toggle("Practice mode", isOn: $model.practiceMode)

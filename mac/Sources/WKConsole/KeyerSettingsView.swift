@@ -33,9 +33,10 @@ struct UserEditor: View {
         Form {
             Section("Speed") {
                 NumberRow("Favourite speed", value: $settings.favoriteWPM, range: 5...99, unit: "WPM")
-                NumberRow("Speed knob minimum", value: $settings.minWPM, range: 5...99, unit: "WPM")
-                NumberRow("Speed knob range", value: $settings.wpmRange, range: 0...31, unit: "WPM",
-                          note: "The knob covers \(settings.minWPM)–\(settings.maxWPM) WPM")
+                NumberRow("Minimum WPM", value: $settings.minWPM, range: 5...99, unit: "WPM",
+                          note: "Lowest speed on the speed control")
+                NumberRow("WPM range", value: $settings.wpmRange, range: 0...31, unit: "WPM",
+                          note: "The speed control covers \(settings.minWPM)–\(settings.maxWPM) WPM")
                 NumberRow("Command speed", value: $settings.commandWPM, range: 5...99, unit: "WPM",
                           note: "Speed of the keyer's replies in command mode")
                 NumberRow("Farnsworth", value: $settings.farnsworth, range: 0...99, unit: "WPM",

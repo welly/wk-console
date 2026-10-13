@@ -95,7 +95,7 @@ struct MenuContent: View {
     var body: some View {
         Text(statusLine)
         if let s = model.activeSettings, model.isConnected {
-            Text("User \(s.user) · \(s.keyMode.name) · knob \(s.minWPM)–\(s.maxWPM) WPM")
+            Text("User \(s.user) · \(s.keyMode.name)")
         }
 
         Divider()
