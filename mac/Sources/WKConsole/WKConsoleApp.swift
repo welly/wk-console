@@ -125,6 +125,7 @@ struct MenuContent: View {
         SettingsLink {
             Text("Settings…")
         }
+        .keyboardShortcut(",")
 
         Divider()
         Button("Quit WK Console") {

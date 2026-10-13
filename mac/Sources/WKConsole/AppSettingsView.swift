@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// App preferences (⌘,). Keyer settings live in the main window.
+/// App preferences (⌘,). The keyer's own configuration lives in the main window.
 struct AppSettingsView: View {
     @EnvironmentObject private var model: KeyerModel
     @AppStorage("ShowMenuBarItem") private var showMenuBarItem = true

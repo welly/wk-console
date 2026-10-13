@@ -9,7 +9,7 @@ enum Page: String, CaseIterable, Identifiable {
         switch self {
         case .operate: "Operate"
         case .messages: "Messages"
-        case .settings: "Keyer Settings"
+        case .settings: "Keyer"
         case .backups: "Backups"
         }
     }
@@ -27,13 +27,14 @@ enum Page: String, CaseIterable, Identifiable {
 struct MainWindow: View {
     @EnvironmentObject private var model: KeyerModel
     @SceneStorage("page") private var page: Page = .operate
+    @Environment(\.textScale) private var scale
 
     var body: some View {
         NavigationSplitView {
             List(Page.allCases, selection: Binding(get: { page }, set: { page = $0 ?? .operate })) { p in
                 Label(p.title, systemImage: p.icon).tag(p)
             }
-            .navigationSplitViewColumnWidth(min: 160, ideal: 180)
+            .navigationSplitViewColumnWidth(min: 180 * scale, ideal: 200 * scale)
         } detail: {
             Group {
                 if model.device == nil {

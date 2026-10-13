@@ -11,14 +11,14 @@ WK Console is an independent project. It isn't affiliated with or endorsed by K1
 - **Type to send.** Send a line at a time, or as you type.
 - **Sent-text transcript.** What the keyer actually sent, from its echo. Paddle sending is underlined.
 - **Practice mode.** Key outputs and PTT stay off, so sending only plays sidetone.
-- **Keyer settings editor.** Both users' speed, paddle, keying, PTT and sidetone settings, plus messages, callsigns and the active user.
+- **Keyer setup.** Edit both users' speed, paddle, keying, PTT and sidetone settings, plus messages, callsigns and the active user.
 - **Safe writes.** Before every write the app checks the keyer hasn't been changed by another app and backs up its memory. After writing, it reads everything back to verify it.
 - **Backups.** Every backup is listed and can be restored.
 - **Accessibility.** Adjustable text size (View → Make Text Bigger, ⌘+), high-contrast text colours, VoiceOver labels and Reduce Motion support.
 
 ## Settings explained
 
-### Keyer Settings
+### Keyer
 
 These are stored in the keyer and used whenever it works on its own (standalone). The keyer holds a full set for each of two users; the **Active user** picker in the toolbar chooses which set it uses. Changes are saved to the keyer with **Write Changes**, which backs up the keyer's memory first and restarts the keyer afterwards.
 
