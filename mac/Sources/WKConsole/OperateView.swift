@@ -54,7 +54,8 @@ struct OperateView: View {
             Spacer()
             VStack(alignment: .trailing, spacing: 6) {
                 if let s = model.activeSettings {
-                    Text("User \(s.user) · \(s.keyMode.name)")
+                    Text("User \(s.user) · \(s.keyMode.name)"
+                         + (s.farnsworth > 0 ? " · Farnsworth \(s.farnsworth) WPM" : ""))
                         .foregroundStyle(Palette.secondaryText)
                 }
                 Toggle("Practice mode", isOn: $model.practiceMode)

@@ -79,7 +79,15 @@ struct UserSettings: Equatable {
     var favoriteWPM: Int { get { byte(1) } set { setByte(1, newValue, 5...99) } }
     var minWPM: Int { get { byte(6) } set { setByte(6, newValue, 5...99) } }
     var wpmRange: Int { get { byte(7) } set { setByte(7, newValue, 0...31) } }
-    var farnsworth: Int { get { byte(10) } set { setByte(10, newValue, 0...99) } }
+    /// 0 (off) or 10–99: the keyer doesn't accept 1–9. Moving into that gap goes
+    /// to 10 when increasing from off, and to 0 when decreasing.
+    var farnsworth: Int {
+        get { byte(10) }
+        set {
+            let v = (1...9).contains(newValue) ? (newValue > byte(10) ? 10 : 0) : newValue
+            setByte(10, v, 0...99)
+        }
+    }
     var commandWPM: Int { get { byte(15) } set { setByte(15, newValue, 5...99) } }
     var maxWPM: Int { minWPM + wpmRange }
 
