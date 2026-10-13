@@ -1,11 +1,24 @@
 #!/bin/sh
-# Build "WK Console.app" into mac/build/. Needs only the Xcode command line tools.
+# Build a universal (Apple silicon + Intel) "WK Console.app" into mac/build/.
+# Needs only the Xcode command line tools. With --zip, also makes the release zip.
 # The app icon is pre-built in Resources/AppIcon.icns (see tools/make_icon.swift).
 set -eu
 cd "$(dirname "$0")"
 
-swift build -c release
-BIN="$(swift build -c release --show-bin-path)/WKConsole"
+VERSION=1.0.0
+BUILD_NUMBER=1
+
+# Build each architecture separately, then combine them: multi-arch builds in one
+# go need the full Xcode app.
+BINS=""
+for ARCH in arm64 x86_64; do
+    swift build -c release --triple "$ARCH-apple-macosx15.0"
+    BINS="$BINS $(swift build -c release --triple "$ARCH-apple-macosx15.0" --show-bin-path)/WKConsole"
+done
+BIN=build/WKConsole-universal
+mkdir -p build
+# shellcheck disable=SC2086
+lipo -create $BINS -output "$BIN"
 
 APP="build/WK Console.app"
 rm -rf "$APP"
@@ -31,9 +44,9 @@ cat > "$APP/Contents/Info.plist" <<'EOF'
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>2.0</string>
+    <string>__VERSION__</string>
     <key>CFBundleVersion</key>
-    <string>2</string>
+    <string>__BUILD_NUMBER__</string>
     <key>LSMinimumSystemVersion</key>
     <string>15.0</string>
     <key>LSApplicationCategoryType</key>
@@ -44,5 +57,16 @@ cat > "$APP/Contents/Info.plist" <<'EOF'
 </plist>
 EOF
 
+sed -i '' -e "s/__VERSION__/$VERSION/" -e "s/__BUILD_NUMBER__/$BUILD_NUMBER/" "$APP/Contents/Info.plist"
+rm "$BIN"
+
 codesign --force --sign - "$APP"
-echo "Built $APP"
+echo "Built $APP $VERSION ($(lipo -archs "$APP/Contents/MacOS/WKConsole"))"
+
+if [ "${1:-}" = "--zip" ]; then
+    ZIP="build/WK-Console-$VERSION.zip"
+    rm -f "$ZIP"
+    # ditto keeps the code signature and extended attributes intact.
+    ditto -c -k --keepParent "$APP" "$ZIP"
+    echo "Zipped $ZIP"
+fi
