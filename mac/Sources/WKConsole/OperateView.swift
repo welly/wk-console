@@ -155,9 +155,8 @@ private struct MessageRow: View {
     }
 }
 
-/// What the keyer has sent, from its echo: sent text plain, paddle sending
-/// underlined in the accent colour, and queued text in grey italics, so the
-/// three are distinguishable without colour.
+/// What the keyer has sent, from its echo, including paddle sending. Text still
+/// waiting to go out follows it with a soft highlight that shrinks as it's sent.
 struct TranscriptView: View {
     @EnvironmentObject private var model: KeyerModel
     @EnvironmentObject private var transcript: Transcript
@@ -168,10 +167,6 @@ struct TranscriptView: View {
                 Text("Sent")
                     .appFont(.heading, weight: .semibold)
                 Spacer()
-                (Text("Paddle").underline().foregroundColor(Palette.accentText)
-                    + Text("   ")
-                    + Text("Queued").italic().foregroundColor(Palette.secondaryText))
-                    .accessibilityLabel("Paddle sending is underlined; queued text is in italics")
                 Button("Clear") { transcript.clear() }
                     .disabled(transcript.runs.isEmpty)
             }
@@ -195,13 +190,13 @@ struct TranscriptView: View {
         .frame(maxHeight: .infinity)
     }
 
+    /// Everything sent, from the paddle or from WK Console, in one style; text
+    /// still waiting to go out is highlighted, and the highlight shrinks as the
+    /// keyer sends each letter.
     private var text: Text {
-        let sent = transcript.runs.reduce(Text("")) { result, run in
-            run.source == .paddle
-                ? result + Text(run.text).underline().foregroundColor(Palette.accentText)
-                : result + Text(run.text).foregroundColor(.primary)
-        }
-        return sent + Text(transcript.pending).italic().foregroundColor(Palette.secondaryText)
+        var waiting = AttributedString(transcript.pending)
+        waiting.backgroundColor = Color.accentColor.opacity(0.22)
+        return Text(AttributedString(transcript.runs.map(\.text).joined()) + waiting)
     }
 }
 

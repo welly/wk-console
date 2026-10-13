@@ -59,7 +59,8 @@ struct UserEditor: View {
                     Text("Wordspace + 8 dits").tag(3)
                 }
                 NumberRow("Switchpoint", value: $settings.paddleSwitchpoint, range: 10...90, unit: "%")
-                NumberRow("Letterspace", value: $settings.letterspace, range: 0...31)
+                NumberRow("Letterspace", value: $settings.letterspace, range: 0...31, unit: "%", multiplier: 2,
+                          note: "Extra space between letters")
                 Toggle("Auto space", isOn: $settings.autospace)
                 Toggle("Swap paddles", isOn: $settings.paddleSwap)
                 Toggle("Disable paddle watchdog", isOn: $settings.watchdogDisabled)
@@ -79,8 +80,9 @@ struct UserEditor: View {
 
             Section("Push to talk") {
                 Toggle("Enable PTT", isOn: $settings.pttEnabled)
-                NumberRow("Lead-in", value: $settings.leadIn, range: 0...250, unit: "× 10 ms")
-                NumberRow("Tail", value: $settings.tail, range: 0...250, unit: "× 10 ms")
+                NumberRow("Lead-in", value: $settings.leadIn, range: 0...250, unit: "ms", multiplier: 10)
+                NumberRow("Tail", value: $settings.tail, range: 0...250, unit: "ms", multiplier: 10,
+                          note: "Added to three dits after messages; paddle sending uses hang time")
             }
 
             Section {
@@ -98,34 +100,50 @@ struct UserEditor: View {
     }
 }
 
+/// A number, its unit, then a stepper. Units sit in a fixed-width column so the
+/// numbers and units line up down the page, and the stepper ends each row at
+/// the same right-hand edge as the switches and menus.
 struct NumberRow: View {
     let title: String
     @Binding var value: Int
     let range: ClosedRange<Int>
     var unit: String = ""
+    /// The stored value is shown multiplied by this, e.g. 10 for settings kept
+    /// in 10 ms steps; the stepper then moves in steps of this size.
+    var multiplier: Int = 1
     var note: String?
+    @Environment(\.textScale) private var scale
 
-    init(_ title: String, value: Binding<Int>, range: ClosedRange<Int>, unit: String = "", note: String? = nil) {
+    init(_ title: String, value: Binding<Int>, range: ClosedRange<Int>, unit: String = "",
+         multiplier: Int = 1, note: String? = nil) {
         self.title = title
         self._value = value
         self.range = range
         self.unit = unit
+        self.multiplier = multiplier
         self.note = note
+    }
+
+    private var shown: Binding<Int> {
+        Binding(
+            get: { value * multiplier },
+            set: { value = Int((Double($0) / Double(multiplier)).rounded()) }
+        )
     }
 
     var body: some View {
         LabeledContent {
             HStack(spacing: 6) {
-                TextField(title, value: $value, format: .number)
+                TextField(title, value: shown, format: .number.grouping(.never))
                     .labelsHidden()
                     .multilineTextAlignment(.trailing)
                     .monospacedDigit()
-                    .frame(width: 56)
-                Stepper(title, value: $value, in: range)
+                    .frame(width: 60 * scale)
+                UnitLabel(unit)
+                Stepper(title, value: shown,
+                        in: (range.lowerBound * multiplier)...(range.upperBound * multiplier),
+                        step: multiplier)
                     .labelsHidden()
-                Text(unit)
-                    .foregroundStyle(Palette.secondaryText)
-                    .frame(minWidth: 60, alignment: .leading)
             }
         } label: {
             Text(title)
@@ -140,6 +158,7 @@ struct NumberRow: View {
 /// app picks the nearest pitch it can make and shows it rounded to 10 Hz.
 struct SidetoneRow: View {
     @EnvironmentObject private var model: KeyerModel
+    @Environment(\.textScale) private var scale
     @Binding var settings: UserSettings
 
     var body: some View {
@@ -158,19 +177,31 @@ struct SidetoneRow: View {
                     .labelsHidden()
                     .multilineTextAlignment(.trailing)
                     .monospacedDigit()
-                    .frame(width: 56)
+                    .frame(width: 60 * scale)
+                UnitLabel("Hz")
                 Stepper("Frequency") {
                     settings.stepSidetone(up: true)
                 } onDecrement: {
                     settings.stepSidetone(up: false)
                 }
                 .labelsHidden()
-                Text("Hz")
-                    .foregroundStyle(Palette.secondaryText)
-                    .frame(minWidth: 60, alignment: .leading)
             }
         } label: {
             Text("Frequency")
         }
+    }
+}
+
+/// The unit after a number, in a fixed-width column so units line up.
+private struct UnitLabel: View {
+    let unit: String
+    @Environment(\.textScale) private var scale
+
+    init(_ unit: String) { self.unit = unit }
+
+    var body: some View {
+        Text(unit)
+            .foregroundStyle(Palette.secondaryText)
+            .frame(width: 36 * scale, alignment: .leading)
     }
 }

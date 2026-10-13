@@ -49,6 +49,7 @@ struct MainWindow: View {
                 }
             }
             .toolbar { MainToolbar() }
+            .safeAreaInset(edge: .bottom, spacing: 0) { ChangesBar() }
         }
         .frame(minWidth: 860, minHeight: 620)
         .alert("Couldn't write to the keyer", isPresented: Binding(
@@ -70,7 +71,6 @@ struct MainToolbar: ToolbarContent {
         ToolbarItemGroup(placement: .primaryAction) {
             ActiveUserPicker()
             TransmitIndicator()
-            WriteControls()
         }
     }
 }
@@ -234,33 +234,40 @@ struct TransmitIndicator: View {
     }
 }
 
-/// The one place that shows writing progress: Revert / Write to Keyer while
-/// there are changes, "Writing…" during a write, then "Saved" briefly.
-struct WriteControls: View {
+/// A bar along the bottom of the window, shown only when there's something to
+/// save: the number of unsaved changes with Revert and Write to Keyer, then
+/// progress while writing, then "Saved" for a few seconds. It's the one place
+/// that shows writing progress.
+struct ChangesBar: View {
     @EnvironmentObject private var model: KeyerModel
     @AppStorage("SkipWriteWarning") private var skipWriteWarning = false
     @State private var confirming = false
     @State private var showSaved = false
 
+    private var isVisible: Bool {
+        model.activity != nil || model.hasUnsavedChanges || showSaved
+    }
+
     var body: some View {
-        HStack {
-            if model.activity == .writing {
-                ProgressView().controlSize(.small)
-                Text("Writing…").foregroundStyle(Palette.secondaryText)
-            } else if model.activity == .reloading {
-                ProgressView().controlSize(.small)
-                Text("Reloading…").foregroundStyle(Palette.secondaryText)
-            } else if model.hasUnsavedChanges {
-                Button("Revert") { model.revertChanges() }
-                Button(model.changeCount == 1 ? "Write 1 Change" : "Write \(model.changeCount) Changes") {
-                    if skipWriteWarning { model.writeChanges() } else { confirming = true }
+        VStack(spacing: 0) {
+            if isVisible {
+                Divider()
+                HStack(spacing: 12) {
+                    status
+                    Spacer()
+                    if model.activity == nil && model.hasUnsavedChanges {
+                        Button("Revert") { model.revertChanges() }
+                        Button("Write to Keyer") {
+                            if skipWriteWarning { model.writeChanges() } else { confirming = true }
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .keyboardShortcut("s")
+                        .disabled(!model.canWrite)
+                    }
                 }
-                .buttonStyle(.borderedProminent)
-                .keyboardShortcut("s")
-                .disabled(!model.canWrite)
-            } else if showSaved {
-                Label("Saved", systemImage: "checkmark.circle.fill")
-                    .foregroundStyle(Palette.success)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 10)
+                .background(.bar)
             }
         }
         .confirmationDialog("Write these changes to the keyer?", isPresented: $confirming) {
@@ -274,6 +281,26 @@ struct WriteControls: View {
             Task {
                 try? await Task.sleep(for: .seconds(3))
                 showSaved = false
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var status: some View {
+        switch model.activity {
+        case .writing:
+            ProgressView().controlSize(.small)
+            Text("Writing to the keyer…")
+        case .reloading:
+            ProgressView().controlSize(.small)
+            Text("Reloading from the keyer…")
+        case nil:
+            if model.hasUnsavedChanges {
+                Label(model.changeCount == 1 ? "1 unsaved change" : "\(model.changeCount) unsaved changes",
+                      systemImage: "pencil.circle")
+            } else {
+                Label("Saved", systemImage: "checkmark.circle.fill")
+                    .foregroundStyle(Palette.success)
             }
         }
     }

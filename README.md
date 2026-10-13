@@ -9,7 +9,7 @@ WK Console is an independent project. It isn't affiliated with or endorsed by K1
 - **Live speed.** Large WPM display that follows the keyer's speed control, also shown in the menu bar.
 - **Send messages.** Your stored messages with short labels, sent with a click or F1–F12. Esc stops sending.
 - **Type to send.** Send a line at a time, or as you type.
-- **Sent-text transcript.** What the keyer actually sent, from its echo. Paddle sending is underlined.
+- **Sent-text transcript.** What the keyer actually sent, from its echo, including your paddle sending. Messages waiting to go out are highlighted, and the highlight shrinks as each letter is sent.
 - **Practice mode.** Key outputs and PTT stay off, so sending only plays sidetone.
 - **Keyer setup.** Edit both users' speed, paddle, keying, PTT and sidetone settings, plus messages, callsigns and the active user.
 - **Safe writes.** Before every write the app checks the keyer hasn't been changed by another app and backs up its memory. After writing, it reads everything back to verify it.
@@ -20,7 +20,7 @@ WK Console is an independent project. It isn't affiliated with or endorsed by K1
 
 ### Keyer
 
-These are stored in the keyer and used whenever it works on its own (standalone). The keyer holds a full set for each of two users; the **Active user** picker in the toolbar chooses which set it uses. Changes are saved to the keyer with **Write Changes**, which backs up the keyer's memory first and restarts the keyer afterwards.
+These are stored in the keyer and used whenever it works on its own (standalone). The keyer holds a full set for each of two users; the **Active user** picker in the toolbar chooses which set it uses. Changes are saved to the keyer with **Write to Keyer** (in the bar at the bottom of the window), which backs up the keyer's memory first and restarts the keyer afterwards.
 
 Descriptions are based on K1EL's [WinKeyer 3 datasheet](https://k1elsystems.com/files/WK3_Datasheet_v1.3.pdf).
 
@@ -42,7 +42,7 @@ Descriptions are based on K1EL's [WinKeyer 3 datasheet](https://k1elsystems.com/
 | Ultimatic priority | In Ultimatic mode, what happens when both paddles are pressed: **Normal** (last pressed wins), or always **Dah** or always **Dit**. |
 | Hang time | How long PTT stays on after you stop sending with the paddles: a word space plus 1, 2, 4 or 8 dits. Because it's measured in dits, it scales with your speed. |
 | Switchpoint | How soon after a dit or dah the keyer starts listening for the next paddle press, as a percentage of a dit (50 = one dit). Too low can send unwanted dits or dahs; too high stops you sending ahead. Faster operators often prefer a little below 50. |
-| Letterspace | Extra space between letters, in steps of 2%: 0 is standard, 7 adds 14%, 31 adds 62%. Useful with auto space if its timing feels strict. |
+| Letterspace | Extra space between letters, from 0% (standard) to 62% in steps of 2%. Useful with auto space if its timing feels strict. |
 | Auto space | If you pause for more than a dit between elements, the keyer treats it as the end of a letter and holds the next one until a full letter space has passed, giving evenly spaced sending. |
 | Swap paddles | Swaps the dit and dah sides, e.g. for left-handed operators or a reversed cable. |
 | Disable paddle watchdog | The watchdog turns the key output off after 128 dits or dahs in a row, in case a paddle sticks or something rests on it. Sidetone carries on so you notice. Tick this only if you need to send very long runs. |
@@ -64,8 +64,8 @@ Descriptions are based on K1EL's [WinKeyer 3 datasheet](https://k1elsystems.com/
 | Setting | What it does |
 |---|---|
 | Enable PTT | Turns on the PTT output, which switches a transmitter or amplifier to transmit before keying starts. |
-| Lead-in | How long PTT is on before keying starts, in 10 ms steps (5 = 50 ms). |
-| Tail | How long PTT stays on after messages and sending from WK Console finish: three dits plus this many 10 ms steps. Paddle sending uses hang time instead. |
+| Lead-in | How long PTT is on before keying starts, in milliseconds (steps of 10 ms, up to 2,500 ms). |
+| Tail | How long PTT stays on after messages and sending from WK Console finish: three dits plus this many milliseconds (steps of 10 ms). Paddle sending uses hang time instead. |
 
 #### Sidetone
 

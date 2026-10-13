@@ -46,7 +46,7 @@ struct MessagesEditor: View {
                     Text("\(store.used) of \(MessageStore.capacity) characters used. Type embedded commands such as /M (your callsign) as ordinary text.")
                         .appFont(.small)
                         .foregroundStyle(store.used > MessageStore.capacity ? Palette.danger : Palette.secondaryText)
-                    Text("Labels are short names for the Operate page and menus. Leave one blank to use the message's first word. They're kept by WK Console and save straight away; messages are saved to the keyer with Write Changes.")
+                    Text("Labels are short names for the Operate page and menus. Leave one blank to use the message's first word. They're kept by WK Console and save straight away; messages are saved to the keyer with Write to Keyer.")
                         .appFont(.small)
                         .foregroundStyle(Palette.secondaryText)
                         .padding(.top, 4)
