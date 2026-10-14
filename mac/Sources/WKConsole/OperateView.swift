@@ -27,7 +27,7 @@ struct OperateView: View {
     }
 
     private var header: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 8) {
+        VStack(alignment: .leading, spacing: 2) {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Text(speed.wpm.map(String.init) ?? "–")
                     .appFont(.speed, weight: .semibold, design: .rounded)
@@ -51,18 +51,13 @@ struct OperateView: View {
                     if !Task.isCancelled { VoiceOver.announce("\(wpm) words per minute") }
                 }
             }
-            Spacer()
-            VStack(alignment: .trailing, spacing: 6) {
-                if let s = model.activeSettings {
-                    Text("User \(s.user) · \(s.keyMode.name)"
-                         + (s.farnsworth > 0 ? " · Farnsworth \(s.farnsworth) WPM" : ""))
-                        .foregroundStyle(Palette.secondaryText)
-                }
-                Toggle("Practice mode", isOn: $model.practiceMode)
-                    .toggleStyle(.switch)
-                    .help("Key outputs and PTT off: sending only plays sidetone")
+            // How the keyer is keying: mode, and Farnsworth when it's set.
+            if let s = model.activeSettings {
+                Text(s.keyMode.name + (s.farnsworth > 0 ? " · Farnsworth \(s.farnsworth) WPM" : ""))
+                    .foregroundStyle(Palette.secondaryText)
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 

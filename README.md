@@ -8,11 +8,11 @@ WK Console is an independent project. It isn't affiliated with or endorsed by K1
 
 ## Features
 
-- **Live speed.** Large WPM display that follows the keyer's speed control, also shown in the menu bar.
+- **Live speed.** Large WPM display that follows the keyer's speed control, also shown in the menu bar. Close the window (⌘W) and WK Console keeps running in the menu bar, still connected; ⌘Q quits.
 - **Send messages.** Your stored messages with short labels, sent with a click or F1–F12. Esc stops sending.
 - **Type to send.** Send a line at a time, or as you type.
 - **Sent-text transcript.** What the keyer actually sent, from its echo, including your paddle sending. Messages waiting to go out are highlighted, and the highlight shrinks as each letter is sent.
-- **Practice mode.** Key outputs and PTT stay off, so sending only plays sidetone.
+- **Practice mode.** A switch in the toolbar: key outputs and PTT stay off, so sending only plays sidetone.
 - **Keyer setup.** Edit both users' speed, paddle, keying, PTT and sidetone settings, plus messages, callsigns and the active user.
 - **Safe writes.** Before every write the app checks the keyer hasn't been changed by another app and backs up its memory. After writing, it reads everything back to verify it.
 - **Backups.** Every backup is listed and can be restored.
@@ -107,11 +107,12 @@ These only affect WK Console, not the keyer.
 | Setting | What it does |
 |---|---|
 | Connection | Which serial port the keyer is on. WK Console finds it automatically when there's only one USB serial device. |
-| Practice mode | While WK Console is connected, keeps the key outputs and PTT off, so anything sent only plays sidetone. Also in the Send menu and on the Operate page. |
+| Practice mode | While WK Console is connected, keeps the key outputs and PTT off, so anything sent only plays sidetone. Also in the toolbar and the Send menu. |
 | Sidetone | **Always on** gives you sidetone while connected even if the keyer's saved setting has it off. **Follow saved setting** uses the keyer's own setting. |
 | Send as you type | Sends each character as you type it, instead of a line at a time when you press Return. |
 | Text size | Makes all the app's text larger: Standard to Largest. Also View → Make Text Bigger (⌘+) / Smaller (⌘−) / Actual Size (⌘0). |
 | Show speed in the menu bar | Shows the live WPM in the menu bar, with quick access to your messages. |
+| Hide Dock icon | Hides the Dock icon when the window is closed, so WK Console runs from the menu bar only. Open it again from the menu bar, Finder or Launchpad. Needs the menu bar item to be shown. |
 | Confirm before writing to the keyer | Asks before each write, as a reminder that writing restarts the keyer. |
 
 ## Tested hardware

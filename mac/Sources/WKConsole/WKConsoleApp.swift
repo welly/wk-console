@@ -3,6 +3,7 @@ import SwiftUI
 
 @main
 struct WKConsoleApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @StateObject private var model = KeyerModel()
     @AppStorage("ShowMenuBarItem") private var showMenuBarItem = true
 
@@ -68,8 +69,19 @@ struct SendCommands: Commands {
 struct MenuBarLabel: View {
     @ObservedObject var model: KeyerModel
     @ObservedObject var speed: LiveSpeed
+    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
+        label
+            // The label is always present while WK Console runs in the menu bar,
+            // so it handles requests to bring the window back (e.g. reopening
+            // the app from Finder).
+            .onReceive(NotificationCenter.default.publisher(for: AppPresence.showMainWindow)) { _ in
+                AppPresence.showApp(openWindow)
+            }
+    }
+
+    private var label: some View {
         HStack(spacing: 4) {
             Image(systemName: model.isSending && !model.practiceMode
                   ? "antenna.radiowaves.left.and.right.circle.fill"
@@ -119,8 +131,7 @@ struct MenuContent: View {
         }
 
         Button("Open WK Console") {
-            openWindow(id: "main")
-            NSApp.activate()
+            AppPresence.showApp(openWindow)
         }
         SettingsLink {
             Text("Settings…")

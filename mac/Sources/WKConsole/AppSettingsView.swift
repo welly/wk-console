@@ -7,6 +7,7 @@ struct AppSettingsView: View {
     @AppStorage("SkipWriteWarning") private var skipWriteWarning = false
     @AppStorage("SendAsYouType") private var sendAsYouType = false
     @AppStorage(TextScale.key) private var textScale = 1.0
+    @AppStorage(AppPresence.hideDockIconKey) private var hideDockIcon = true
 
     var body: some View {
         Form {
@@ -34,6 +35,17 @@ struct AppSettingsView: View {
                     .appFont(.small)
                     .foregroundStyle(Palette.secondaryText)
                 Toggle("Show speed in the menu bar", isOn: $showMenuBarItem)
+                    .onChange(of: showMenuBarItem) { _, shown in
+                        if !shown { AppPresence.showDockIcon() }
+                    }
+                Toggle(isOn: $hideDockIcon) {
+                    Text("Hide Dock icon")
+                    Text("Hide the Dock icon when the window is closed. WK Console keeps running in the menu bar.")
+                }
+                .disabled(!showMenuBarItem)
+                .onChange(of: hideDockIcon) { _, hide in
+                    if !hide { AppPresence.showDockIcon() }
+                }
                 Toggle("Confirm before writing to the keyer", isOn: Binding(
                     get: { !skipWriteWarning },
                     set: { skipWriteWarning = !$0 }

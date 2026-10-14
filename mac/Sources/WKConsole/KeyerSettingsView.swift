@@ -21,7 +21,6 @@ struct KeyerSettingsView: View {
         }
         .disabled(!model.canEdit)
         .navigationTitle("Keyer")
-        .navigationSubtitle(user == model.activeUser ? "User \(user) · active" : "User \(user)")
     }
 }
 

@@ -52,6 +52,7 @@ struct MainWindow: View {
             .safeAreaInset(edge: .bottom, spacing: 0) { ChangesBar() }
         }
         .frame(minWidth: 860, minHeight: 620)
+        .onDisappear { AppPresence.windowClosed() }
         .alert("Couldn't write to the keyer", isPresented: Binding(
             get: { model.writeError != nil },
             set: { if !$0 { model.writeError = nil } }
@@ -70,6 +71,7 @@ struct MainToolbar: ToolbarContent {
         }
         ToolbarItemGroup(placement: .primaryAction) {
             ActiveUserPicker()
+            PracticeToggle()
             TransmitIndicator()
         }
     }
@@ -209,28 +211,40 @@ struct ActiveUserPicker: View {
     }
 }
 
-struct TransmitIndicator: View {
+struct PracticeToggle: View {
     @EnvironmentObject private var model: KeyerModel
 
     var body: some View {
-        if model.practiceMode {
-            badge("PRACTICE", .blue)
-                .help("Practice mode: key outputs and PTT are off")
-                .accessibilityLabel("Practice mode on: the transmitter isn't keyed")
-        } else if model.isSending {
-            badge("TX", .red)
-                .help("Sending: your transmitter is keyed")
-                .accessibilityLabel("Transmitting")
+        // The toolbar hides control labels, so show "Practice mode" as its own text.
+        HStack(spacing: 6) {
+            Text("Practice mode")
+                .onTapGesture { model.practiceMode.toggle() }
+                .accessibilityHidden(true)
+            Toggle("Practice mode", isOn: $model.practiceMode)
+                .toggleStyle(.switch)
+                .controlSize(.small)
+                .labelsHidden()
         }
+        .padding(.horizontal, 4)
+        .help("Practice mode: key outputs and PTT stay off, so sending only plays sidetone")
     }
+}
 
-    private func badge(_ text: String, _ colour: Color) -> some View {
-        Text(text)
+struct TransmitIndicator: View {
+    @EnvironmentObject private var model: KeyerModel
+
+    /// Always shown, so the toolbar doesn't shift: dim normally, red while the
+    /// transmitter is actually keyed (never in practice mode).
+    var body: some View {
+        let transmitting = model.isSending && !model.practiceMode
+        Text("TX")
             .appFont(.small, weight: .bold)
-            .foregroundStyle(.white)
+            .foregroundStyle(transmitting ? Color.white : Palette.secondaryText)
             .padding(.horizontal, 8)
             .padding(.vertical, 3)
-            .background(colour.opacity(model.isSending ? 1 : 0.7), in: Capsule())
+            .background(transmitting ? Color.red : Palette.secondaryText.opacity(0.15), in: Capsule())
+            .help(transmitting ? "Sending: your transmitter is keyed" : "Lights up red while your transmitter is keyed")
+            .accessibilityLabel(transmitting ? "Transmitting" : "Not transmitting")
     }
 }
 
