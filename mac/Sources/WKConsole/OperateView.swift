@@ -190,9 +190,16 @@ struct TranscriptView: View {
     /// still waiting to go out is highlighted, and the highlight shrinks as the
     /// keyer sends each letter.
     private var text: Text {
-        var waiting = AttributedString(transcript.pending)
+        var all = AttributedString()
+        for run in transcript.runs {
+            var part = AttributedString(Prosigns.display(run.text))
+            // Letters the keyer couldn't decode show as a grey "?".
+            if run.source == .unknown { part.foregroundColor = Palette.secondaryText }
+            all += part
+        }
+        var waiting = AttributedString(Prosigns.display(transcript.pending))
         waiting.backgroundColor = Color.accentColor.opacity(0.22)
-        return Text(AttributedString(transcript.runs.map(\.text).joined()) + waiting)
+        return Text(all + waiting)
     }
 }
 

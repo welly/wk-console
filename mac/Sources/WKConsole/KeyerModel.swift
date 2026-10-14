@@ -59,7 +59,8 @@ final class LiveSpeed: ObservableObject {
 
 /// What the keyer has sent, from its echo, and what's still waiting to go.
 final class Transcript: ObservableObject {
-    enum Source { case sent, paddle }
+    /// `unknown` is a paddle letter the keyer couldn't decode (it reports "#").
+    enum Source { case sent, paddle, unknown }
 
     struct Run: Identifiable {
         let id = UUID()
@@ -87,6 +88,12 @@ final class Transcript: ObservableObject {
             count -= runs[0].text.count
             runs.removeFirst()
         }
+    }
+
+    /// Add a word space unless the transcript is empty or already ends in one.
+    func appendSpaceIfNeeded() {
+        guard let last = runs.last?.text.last, last != " " else { return }
+        append(" ", from: .paddle)
     }
 
     func queued(_ text: String) { pending += text }
@@ -552,6 +559,9 @@ final class KeyerModel: ObservableObject {
         var inFlight = 0          // characters sent to the keyer but not yet echoed
         var xoff = false
         var breakIn = false
+        // The keyer reports each letter keyed on the paddle but not the gaps
+        // between words, so word spaces are worked out from timing.
+        var lastPaddleEcho: Date?
 
         while !session.stopped {
             let now = Date()
@@ -612,7 +622,27 @@ final class KeyerModel: ObservableObject {
             } else if b < 0x80 {
                 // Echo of a character the keyer has just sent.
                 if breakIn {
-                    publish(session) { $0.transcript.append(Character(UnicodeScalar(b)), from: .paddle) }
+                    let c = Character(UnicodeScalar(b))
+                    let now = Date()
+                    var wordGap = false
+                    // Echoes arrive as each letter finishes. Take away the letter's
+                    // own length to get the pause before it. Hand-keyed letter gaps
+                    // are often well over the textbook three dits, so only a pause
+                    // of at least seven dits and 0.7 seconds counts as a new word.
+                    if let last = lastPaddleEcho {
+                        let dit = 1.2 / Double(lastWPM ?? settings.minWPM)
+                        let pause = now.timeIntervalSince(last) - Double(MorseText.units(c) ?? 0) * dit
+                        wordGap = pause > max(7 * dit, 0.7)
+                    }
+                    lastPaddleEcho = now
+                    publish(session) {
+                        if wordGap { $0.transcript.appendSpaceIfNeeded() }
+                        if c == "#" {
+                            $0.transcript.append("?", from: .unknown)
+                        } else {
+                            $0.transcript.append(c, from: .paddle)
+                        }
+                    }
                 } else {
                     inFlight = max(0, inFlight - 1)
                     if !session.isPreviewing {

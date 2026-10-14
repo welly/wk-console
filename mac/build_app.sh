@@ -5,8 +5,8 @@
 set -eu
 cd "$(dirname "$0")"
 
-VERSION=1.0.5
-BUILD_NUMBER=6
+VERSION=1.0.6
+BUILD_NUMBER=7
 
 # Build each architecture separately, then combine them: multi-arch builds in one
 # go need the full Xcode app.

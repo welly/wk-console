@@ -32,6 +32,13 @@ enum MorseText {
         return m
     }()
 
+    /// How long a character takes to send, in dit-lengths: 1 per dit, 3 per dah,
+    /// and 1 between elements. Nil for characters without a Morse code.
+    static func units(_ c: Character) -> Int? {
+        guard let code = table[Character(c.uppercased())] else { return nil }
+        return code.reduce(0) { $0 + ($1 == "-" ? 3 : 1) } + code.count - 1
+    }
+
     /// Characters in `text` that can't be stored.
     static func unsupported(in text: String) -> [Character] {
         var seen: [Character] = []
@@ -129,5 +136,32 @@ struct MessageStore: Equatable {
         for p in (Self.tableStart + offset)..<min(image.count, Self.tableStart + 0x100) {
             image[p] = 0
         }
+    }
+}
+
+/// Prosigns the keyer reports using spare punctuation characters (WK3 datasheet,
+/// table 17). In amateur CW these patterns are almost always prosigns, so they're
+/// shown that way, with a line over the letters as prosigns are usually written.
+enum Prosigns {
+    private static let map: [Character: String] = [
+        "+": "AR", "<": "AR",
+        ">": "SK",
+        "=": "BT",
+        "(": "KN", ":": "KN", "]": "KN",
+        "[": "AS",
+    ]
+
+    /// `text` with prosign characters replaced by overlined letters (each letter
+    /// followed by U+0305 COMBINING OVERLINE, which joins into one bar).
+    static func display(_ text: String) -> String {
+        var out = ""
+        for c in text {
+            if let letters = map[c] {
+                for l in letters { out.append(l); out.append("\u{0305}") }
+            } else {
+                out.append(c)
+            }
+        }
+        return out
     }
 }

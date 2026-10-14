@@ -11,7 +11,7 @@ WK Console is an independent project. It isn't affiliated with or endorsed by K1
 - **Live speed.** Large WPM display that follows the keyer's speed control, also shown in the menu bar. Close the window (⌘W) and WK Console keeps running in the menu bar, still connected; ⌘Q quits.
 - **Send messages.** Your stored messages with short labels, sent with a click or F1–F12. Esc stops sending.
 - **Type to send.** Send a line at a time, or as you type.
-- **Sent-text transcript.** What the keyer actually sent, from its echo, including your paddle sending. Messages waiting to go out are highlighted, and the highlight shrinks as each letter is sent.
+- **Sent-text transcript.** What the keyer actually sent, from its echo, including your paddle sending, with word spaces worked out from your timing. Prosigns show with a line over them (A̅R̅, S̅K̅, B̅T̅, K̅N̅, A̅S̅), and a grey **?** marks a paddle letter the keyer couldn't decode. Messages waiting to go out are highlighted, and the highlight shrinks as each letter is sent.
 - **Practice mode.** A switch in the toolbar: key outputs and PTT stay off, so sending only plays sidetone.
 - **Keyer setup.** Edit both users' speed, paddle, keying, PTT and sidetone settings, plus messages, callsigns and the active user.
 - **Safe writes.** Before every write the app checks the keyer hasn't been changed by another app and backs up its memory. After writing, it reads everything back to verify it.
