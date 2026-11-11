@@ -160,7 +160,7 @@ mac/build_app.sh
 
 This builds `mac/build/WK Console.app`. Drag it to Applications if you want to keep it.
 
-The app isn't signed with a Developer ID. The first time you open a downloaded copy, right-click it and choose **Open**.
+The app isn't signed with a Developer ID or notarised. The first time you open a downloaded copy, macOS will refuse: go to **System Settings › Privacy & Security**, scroll down and click **Open Anyway**.
 
 ## Command-line tool
 
